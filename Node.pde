@@ -106,7 +106,7 @@ class OpTree {
     String desc = describe();
 
     // approximate complexity in the hackiest way possible!
-    while ((desc.length() < 32) || (desc.length() > 128)) {
+    while ((desc.length() < 32) || (desc.length() > 256)) {
       print("x");
       init();
       desc = describe();

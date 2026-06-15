@@ -11,23 +11,12 @@ void settings() {
   size(SCALE*DIM, SCALE*DIM);
 }
 
-int[][] initGrid() {
-  int[][] grid = new color[DIM][DIM];
-  for (int y=0; y < DIM; y++) {
-    for (int x=0; x < DIM; x++) {
-      grid[y][x] = 0;
-    }
-  }
-  return grid;
-}
 
 void setup() {
   noStroke();
-  noLoop();
-
-  red = initGrid();
-  green = initGrid();
-  blue = initGrid();
+  red = new int[DIM][DIM];
+  green = new int[DIM][DIM];
+  blue = new int[DIM][DIM];
 }
 
 // Draw these as they come in?!
@@ -49,17 +38,17 @@ void update(int[][] grid) {
   // Rescale
   //println("======");
   //println("min/max: " + min, ", " + max);
+
   for (int y=0; y < DIM; y++) {
     for (int x=0; x < DIM; x++) {
       grid[y][x] = round(map(grid[y][x], min, max, 0, 255));
     }
   }
+
 }
 
 void draw() {
-  update(red);
-  update(green);
-  update(blue);
+
   int shade_r, shade_g, shade_b;
 
   for (int y=0; y < DIM; y++) {
@@ -71,10 +60,15 @@ void draw() {
       rect(x*SCALE, y*SCALE, SCALE, SCALE);
     }
   }
-  noLoop();
 } 
 
 void mouseClicked() {
+  //thread("update");
+  update();
+}
+
+void update(){
+  background(0);
   println("\n");
   // Color variations
   // TODO: add black/white
@@ -84,8 +78,11 @@ void mouseClicked() {
     colorMode(RGB);
   }
   
+  update(red);
+  update(green);
+  update(blue);
+  
   // TODO: add mirror variations?!
-  loop();
 }
 
 void keyPressed(){
