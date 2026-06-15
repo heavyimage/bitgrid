@@ -1,12 +1,24 @@
 BinaryOpNode randomBinaryOp() {
   BinaryOpNode n;
-  
+
   // TODO: sort this list / the functions below into bitwise and not!
-  // TODO: add back div/log?
   // TODO: do this dynamically via reflection
-  String[] list = {"BitAndNode", "BitOrNode", "BitXorNode", "MinusNode", "ModNode", "MultNode", "PlusNode", "PowerNode"};// "DivNode", , "LogNode"};
-  Random r = new Random();
-  String subclass = list[r.nextInt(list.length)];
+  String[] list = {
+    "BitAndNode",
+    "BitOrNode",
+    "BitXorNode",
+    "MinusNode",
+    "ModNode",
+    "MultNode",
+    "PlusNode",
+    //"PowerNode",
+    //"DivNode",
+    //"LogNode",
+    "MaxNode",
+    "MinNode"
+   };
+
+  String subclass = list[floor(random(list.length))];
   if (subclass == "BitAndNode") n = new BitAndNode();
   else if (subclass == "BitOrNode") n = new BitOrNode();
   else if (subclass == "BitXorNode") n = new BitOrNode();
@@ -17,6 +29,8 @@ BinaryOpNode randomBinaryOp() {
   else if (subclass == "PlusNode") n = new PlusNode();
   else if (subclass == "PowerNode") n = new PowerNode();
   else if (subclass == "LogNode") n = new LogNode();
+  else if (subclass == "MaxNode") n = new MaxNode();
+  else if (subclass == "MinNode") n = new MinNode();
   else throw new RuntimeException("unknown type");
   return n;
 }
@@ -41,8 +55,8 @@ abstract class BinaryOpNode implements BinaryNode {
 
   abstract int eval(int x, int y);
 
-  String describe(){
-    return "(" + left.describe() + " " + this.op + " " + right.describe() + ")"; 
+  String describe() {
+    return "(" + left.describe() + " " + this.op + " " + right.describe() + ")";
   }
 }
 
@@ -145,5 +159,29 @@ class BitXorNode extends BinaryOpNode {
   }
   int eval(int x, int y) {
     return this.left.eval(x, y) ^ this.right.eval(x, y);
+  }
+}
+
+class MaxNode extends BinaryOpNode {
+  MaxNode() {
+    super();
+  }
+  int eval(int x, int y) {
+    return max(this.left.eval(x, y), this.right.eval(x, y));
+  }
+  String describe() {
+    return "max(" + left.describe() + ", " + right.describe() + ")";
+  }
+}
+
+class MinNode extends BinaryOpNode {
+  MinNode() {
+    super();
+  }
+  String describe() {
+    return "min(" + left.describe() + ", " + right.describe() + ")";
+  }
+  int eval(int x, int y) {
+    return min(this.left.eval(x, y), this.right.eval(x, y));
   }
 }

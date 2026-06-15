@@ -1,37 +1,28 @@
-import java.util.Random;
-
 interface Node {
   abstract int eval(int x, int y);
   abstract String describe();
 }
 
-interface UnaryNode extends Node{}
+interface UnaryNode extends Node {}
 interface BinaryNode extends Node {}
 interface OpNode extends Node {}
 
-class ValueNode implements UnaryNode {
-  Object value;
+class VarNode implements UnaryNode {
+  String value;
 
-  ValueNode(String value) {
-    this.value = (Object)value;
+  VarNode(String value) {
+    this.value = value;
   }
 
-  ValueNode(int value) {
-    this.value = (Object)value;
-  }
-
-  void setValue(Object value) {
+  void setValue(String value) {
     this.value = value;
   }
 
   String describe() {
     return "" + this.value;
   }
-
   int eval(int x, int y) {
-    if ( this.value instanceof Integer) {
-      return (int)this.value;
-    } else if (this.value == "x") {
+    if (this.value == "x") {
       return x;
     } else if (this.value == "y") {
       return y;
@@ -41,7 +32,25 @@ class ValueNode implements UnaryNode {
   }
 }
 
+class ConstNode implements UnaryNode {
+  int value;
 
+  ConstNode(int value) {
+    this.value = value;
+  }
+
+  void setValue(int value) {
+    this.value = value;
+  }
+
+  String describe() {
+    return "" + this.value;
+  }
+
+  int eval(int x, int y) {
+    return this.value;
+  }
+}
 
 Node decider() {
 
@@ -52,17 +61,19 @@ Node decider() {
       //n = new ValueNode(round(random(-1, 1)));
       //n = new ValueNode(round(random(-4, 4)));
       //n = new ValueNode(round(random(-512, 512)));
+      //n = new ValueNode(round(random(0, 128)));
       //n = new ValueNode(round(random(1, 4)));
-      n = new ValueNode(round(random(-1, 1)));
+      //n = new ConstNode(round(random(-8, 8)));
+      n = new ConstNode(round(random(1, 16)));
     } else {
       if (random(1.0) > 0.5) {
-        n = new ValueNode("x");
+        n = new VarNode("x");
       } else {
-        n = new ValueNode("y");
+        n = new VarNode("y");
       }
     }
   } else {
-    if (random(1.0) > 0.33) {
+    if (random(1.0) > 0.25) {
       n = randomBinaryOp();
     } else {
       n = randomUnaryOp();
@@ -86,7 +97,7 @@ class OpTree {
     while (pipeline.size() > 0) {
       cursor = (Node)pipeline.remove(0);
       //println(cursor, cursor.getClass());
-      
+
       if (cursor instanceof BinaryOpNode) {
         BinaryOpNode bon = (BinaryOpNode)cursor;
         // Handle Left
@@ -94,7 +105,7 @@ class OpTree {
         //println(left, left.getClass());
         bon.setLeft(left);
         pipeline.add(left);
-  
+
         // Handle Right
         right = decider();
         //println(right, right.getClass());
@@ -121,7 +132,7 @@ class OpTree {
     String desc = describe();
 
     // approximate complexity in the hackiest way possible!
-    while ((desc.length() < 32) || (desc.length() > 256)) {
+    while ((desc.length() < 32) || (desc.length() > 128)) {
       print("x");
       init();
       desc = describe();

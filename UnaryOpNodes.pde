@@ -3,9 +3,15 @@ UnaryOpNode randomUnaryOp() {
   
   // TODO: sort this list / the functions below into bitwise and not!
   // TODO: do this dynamically via reflection
-  String[] list = {"SinNode", "CosNode", "TanNode", "NegativeNode", "ComplementNode"};
-  Random r = new Random();
-  String subclass = list[r.nextInt(list.length)];
+  String[] list = {
+     "SinNode",
+     "CosNode",
+     //"TanNode",
+     "NegativeNode",
+     "ComplementNode"
+   }; 
+
+  String subclass = list[floor(random(list.length))];
   if (subclass == "SinNode") n = new SinNode();
   else if (subclass == "CosNode") n = new CosNode();
   else if (subclass == "TanNode") n = new TanNode();
