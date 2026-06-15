@@ -1,17 +1,7 @@
 UnaryOpNode randomUnaryOp() {
   UnaryOpNode n;
-  
-  // TODO: sort this list / the functions below into bitwise and not!
-  // TODO: do this dynamically via reflection
-  String[] list = {
-     "SinNode",
-     "CosNode",
-     //"TanNode",
-     "NegativeNode",
-     "ComplementNode"
-   }; 
 
-  String subclass = list[floor(random(list.length))];
+  String subclass = AVAILABLE_UNARY_OPS[floor(random(AVAILABLE_UNARY_OPS.length))];
   if (subclass == "SinNode") n = new SinNode();
   else if (subclass == "CosNode") n = new CosNode();
   else if (subclass == "TanNode") n = new TanNode();

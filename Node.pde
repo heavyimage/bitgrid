@@ -3,32 +3,28 @@ interface Node {
   abstract String describe();
 }
 
-interface UnaryNode extends Node {}
-interface BinaryNode extends Node {}
-interface OpNode extends Node {}
+interface UnaryNode extends Node {
+}
+interface BinaryNode extends Node {
+}
+interface OpNode extends Node {
+}
 
-class VarNode implements UnaryNode {
-  String value;
-
-  VarNode(String value) {
-    this.value = value;
-  }
-
-  void setValue(String value) {
-    this.value = value;
-  }
-
+class XNode implements UnaryNode {
   String describe() {
-    return "" + this.value;
+    return "x";
   }
   int eval(int x, int y) {
-    if (this.value == "x") {
-      return x;
-    } else if (this.value == "y") {
-      return y;
-    } else {
-      throw new RuntimeException();
-    }
+    return x;
+  }
+}
+
+class YNode implements UnaryNode {
+  String describe() {
+    return "y";
+  }
+  int eval(int x, int y) {
+    return y;
   }
 }
 
@@ -36,10 +32,6 @@ class ConstNode implements UnaryNode {
   int value;
 
   ConstNode(int value) {
-    this.value = value;
-  }
-
-  void setValue(int value) {
     this.value = value;
   }
 
@@ -52,28 +44,22 @@ class ConstNode implements UnaryNode {
   }
 }
 
+// HUGELY important -- the probabilities of various different nodes!
 Node decider() {
 
   Node n;
   if (random(1.0) > 0.45) {
     if (random(1.0) > 0.75) {
-      // NOTE: futzing with these values can have interesting reuslts!
-      //n = new ValueNode(round(random(-1, 1)));
-      //n = new ValueNode(round(random(-4, 4)));
-      //n = new ValueNode(round(random(-512, 512)));
-      //n = new ValueNode(round(random(0, 128)));
-      //n = new ValueNode(round(random(1, 4)));
-      //n = new ConstNode(round(random(-8, 8)));
-      n = new ConstNode(round(random(1, 16)));
+      n = new ConstNode(round(random(CONST_MIN, CONST_MAX)));
     } else {
       if (random(1.0) > 0.5) {
-        n = new VarNode("x");
+        n = new XNode();
       } else {
-        n = new VarNode("y");
+        n = new YNode();
       }
     }
   } else {
-    if (random(1.0) > 0.25) {
+    if (random(1.0) > 0.5) {
       n = randomBinaryOp();
     } else {
       n = randomUnaryOp();
@@ -133,11 +119,11 @@ class OpTree {
 
     // approximate complexity in the hackiest way possible!
     while ((desc.length() < 32) || (desc.length() > 128)) {
-      print("x");
+      //print("x");
       init();
       desc = describe();
     }
-    println("\n" + desc + " (length: " + desc.length() + "!)");
+    println(desc + " (length: " + desc.length() + "!)");
   }
 
   int eval(int x, int y) {

@@ -8,6 +8,42 @@ int[][] g1, g2, g3;
 boolean ready;
 boolean tileMode = false;
 
+// NOTE: futzing with these values can have interesting reuslts, eg:
+//random(-1, 1)));
+//random(-4, 4)));
+//random(-512, 512)));
+//random(0, 128)));
+//random(1, 4)));
+//random(-8, 8)));
+int CONST_MIN = -8;
+int CONST_MAX = 8;
+
+// Also, please feel free to tweak
+// The probabilities in decider()
+
+final String[] AVAILABLE_UNARY_OPS = {
+   //"SinNode",
+   //"CosNode",
+   //"TanNode",
+   "NegativeNode",
+   "ComplementNode"
+ }; 
+
+final String[] AVAILABLE_BINARY_OPS = {
+  "BitAndNode",
+  "BitOrNode",
+  "BitXorNode",
+  //"MinusNode",
+  "ModNode",
+  //"MultNode",
+  //"PlusNode",
+  //"PowerNode",
+  //"DivNode",
+  //"LogNode",
+  "MaxNode",
+  "MinNode"
+ };
+
 void setup() {
   size(1024, 1024);
   noStroke();

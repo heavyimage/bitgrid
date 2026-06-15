@@ -1,24 +1,7 @@
 BinaryOpNode randomBinaryOp() {
   BinaryOpNode n;
 
-  // TODO: sort this list / the functions below into bitwise and not!
-  // TODO: do this dynamically via reflection
-  String[] list = {
-    "BitAndNode",
-    "BitOrNode",
-    "BitXorNode",
-    "MinusNode",
-    "ModNode",
-    "MultNode",
-    "PlusNode",
-    //"PowerNode",
-    //"DivNode",
-    //"LogNode",
-    "MaxNode",
-    "MinNode"
-   };
-
-  String subclass = list[floor(random(list.length))];
+  String subclass = AVAILABLE_BINARY_OPS[floor(random(AVAILABLE_BINARY_OPS.length))];
   if (subclass == "BitAndNode") n = new BitAndNode();
   else if (subclass == "BitOrNode") n = new BitOrNode();
   else if (subclass == "BitXorNode") n = new BitOrNode();
