@@ -2,7 +2,8 @@ OpNode randomOp() {
   OpNode n;
   
   // TODO: sort this list / the functions below into bitwise and not!
-  String[] list = {"BitAndNode", "BitOrNode", "BitXorNode", "MinusNode", "ModNode", "MultNode", "PlusNode"};// "DivNode", "PowerNode", "LogNode"};
+  // TODO: add back div/log?
+  String[] list = {"BitAndNode", "BitOrNode", "BitXorNode", "MinusNode", "ModNode", "MultNode", "PlusNode", "PowerNode"};// "DivNode", , "LogNode"};
   Random r = new Random();
   String subclass = list[r.nextInt(list.length)];
   if (subclass == "BitAndNode") n = new BitAndNode();

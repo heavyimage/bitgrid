@@ -76,11 +76,15 @@ void draw() {
 
 void mouseClicked() {
   println("\n");
+  // Color variations
+  // TODO: add black/white
   if (random(1.0) > 0.5) {
     colorMode(HSB);
   } else {
     colorMode(RGB);
   }
+  
+  // TODO: add mirror variations?!
   loop();
 }
 

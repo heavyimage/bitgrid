@@ -38,13 +38,20 @@ class ValueNode extends Node {
 }
 
 // TODO: Bitwise Complement (~)
+// TODO: negative (-)
+// TODO: sin / cos / tan
+// TODO: floor / ceil
 
 Node decider() {
 
   Node n;
   if (random(1.0) > 0.45) {
     if (random(1.0) > 0.75) {
-      n = new ValueNode(round(random(-16, 16)));
+      // NOTE: futzing with these values can have interesting reuslts!
+      //n = new ValueNode(round(random(-1, 1)));
+      //n = new ValueNode(round(random(-4, 4)));
+      //n = new ValueNode(round(random(-512, 512)));
+      n = new ValueNode(round(random(1, 4)));
     } else {
       if (random(1.0) > 0.5) {
         n = new ValueNode("x");
