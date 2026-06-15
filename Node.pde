@@ -1,11 +1,15 @@
 import java.util.Random;
 
-abstract class Node {
+interface Node {
   abstract int eval(int x, int y);
   abstract String describe();
 }
 
-class ValueNode extends Node {
+interface UnaryNode extends Node{}
+interface BinaryNode extends Node {}
+interface OpNode extends Node {}
+
+class ValueNode implements UnaryNode {
   Object value;
 
   ValueNode(String value) {
@@ -37,10 +41,7 @@ class ValueNode extends Node {
   }
 }
 
-// TODO: Bitwise Complement (~)
-// TODO: negative (-)
-// TODO: sin / cos / tan
-// TODO: floor / ceil
+
 
 Node decider() {
 
@@ -51,7 +52,8 @@ Node decider() {
       //n = new ValueNode(round(random(-1, 1)));
       //n = new ValueNode(round(random(-4, 4)));
       //n = new ValueNode(round(random(-512, 512)));
-      n = new ValueNode(round(random(1, 4)));
+      //n = new ValueNode(round(random(1, 4)));
+      n = new ValueNode(round(random(-1, 1)));
     } else {
       if (random(1.0) > 0.5) {
         n = new ValueNode("x");
@@ -60,7 +62,11 @@ Node decider() {
       }
     }
   } else {
-    n = randomOp();
+    if (random(1.0) > 0.33) {
+      n = randomBinaryOp();
+    } else {
+      n = randomUnaryOp();
+    }
   }
   return n;
 }
@@ -68,31 +74,40 @@ Node decider() {
 
 class OpTree {
 
-  OpNode root;
+  Node root;
 
   void init() {
     // TODO: randomize this too?
-    root = randomOp();
+    root = randomBinaryOp();
 
     ArrayList pipeline = new ArrayList();
     pipeline.add(root);
-    OpNode cursor;
-    Node left, right;
+    Node cursor, left, right, child;
     while (pipeline.size() > 0) {
-      cursor = (OpNode)pipeline.remove(0);
+      cursor = (Node)pipeline.remove(0);
       //println(cursor, cursor.getClass());
-
-      // Handle Left
-      left = decider();
-      //println(left, left.getClass());
-      cursor.setLeft(left);
-      if (left instanceof OpNode) pipeline.add(left);
-
-      // Handle Right
-      right = decider();
-      //println(right, right.getClass());
-      cursor.setRight(right);
-      if (right instanceof OpNode) pipeline.add(right);
+      
+      if (cursor instanceof BinaryOpNode) {
+        BinaryOpNode bon = (BinaryOpNode)cursor;
+        // Handle Left
+        left = decider();
+        //println(left, left.getClass());
+        bon.setLeft(left);
+        pipeline.add(left);
+  
+        // Handle Right
+        right = decider();
+        //println(right, right.getClass());
+        bon.setRight(right);
+        pipeline.add(right);
+      } else if (cursor instanceof UnaryOpNode) {
+        UnaryOpNode uon = (UnaryOpNode)cursor;
+        // Handle Left
+        child = decider();
+        //println(left, left.getClass());
+        uon.setChild(child);
+        pipeline.add(child);
+      }
     }
 
     // TODO: try to get to a certain depth

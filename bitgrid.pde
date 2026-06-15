@@ -1,8 +1,8 @@
 // f(x, y) = ((((x % y) ^ (~y)) % ((9 % y) % (y & y))) + (((-y) - (x * 1)) - ((7 | y) - (x & x)))) % 5
 
 // TODO: dynamically rescale this, say with +/-!
-final int DIM = 1024;
-final int SCALE = 1;
+int DIM = 1024;
+int SCALE = 1;
 int[][] red, green, blue;
 int shade;
 OpTree func;
@@ -20,7 +20,7 @@ void setup() {
 }
 
 // Draw these as they come in?!
-void update(int[][] grid) {
+void update_cells(int[][] grid) {
   func = new OpTree();
   int min = Integer.MAX_VALUE;
   int max = Integer.MIN_VALUE;
@@ -51,8 +51,8 @@ void draw() {
 
   int shade_r, shade_g, shade_b;
 
-  for (int y=0; y < DIM; y++) {
-    for (int x=0; x < DIM; x++) {
+  for (int y=0; y < red.length; y++) {
+    for (int x=0; x < red[0].length; x++) {
       shade_r = red[y][x];
       shade_g = green[y][x];
       shade_b = blue[y][x];
@@ -63,11 +63,11 @@ void draw() {
 } 
 
 void mouseClicked() {
-  //thread("update");
-  update();
+  //thread("refresh");
+  refresh();
 }
 
-void update(){
+void refresh(){
   background(0);
   println("\n");
   // Color variations
@@ -77,10 +77,12 @@ void update(){
   } else {
     colorMode(RGB);
   }
-  
-  update(red);
-  update(green);
-  update(blue);
+  red = new int[DIM][DIM];
+  green = new int[DIM][DIM];
+  blue = new int[DIM][DIM];
+  update_cells(red);
+  update_cells(green);
+  update_cells(blue);
   
   // TODO: add mirror variations?!
 }
@@ -89,5 +91,11 @@ void keyPressed(){
  if (key == 's'){
     saveFrame("line-######.png");
     println("saved line-" + frameCount + ".png");
+ } else if (key == '='){
+    SCALE *= 2;
+    DIM /= 2;
+ } else if (key == '-'){
+     SCALE /= 2;
+    DIM *= 2;
  }
 }

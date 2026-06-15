@@ -1,8 +1,9 @@
-OpNode randomOp() {
-  OpNode n;
+BinaryOpNode randomBinaryOp() {
+  BinaryOpNode n;
   
   // TODO: sort this list / the functions below into bitwise and not!
   // TODO: add back div/log?
+  // TODO: do this dynamically via reflection
   String[] list = {"BitAndNode", "BitOrNode", "BitXorNode", "MinusNode", "ModNode", "MultNode", "PlusNode", "PowerNode"};// "DivNode", , "LogNode"};
   Random r = new Random();
   String subclass = list[r.nextInt(list.length)];
@@ -20,12 +21,12 @@ OpNode randomOp() {
   return n;
 }
 
-abstract class OpNode extends Node {
+abstract class BinaryOpNode implements BinaryNode {
   Node left;
   Node right;
   String op;
 
-  OpNode() {
+  BinaryOpNode() {
     this.left = null;
     this.right = null;
   }
@@ -45,7 +46,7 @@ abstract class OpNode extends Node {
   }
 }
 
-class PlusNode extends OpNode {
+class PlusNode extends BinaryOpNode {
   PlusNode() {
     super();
     this.op = "+";
@@ -55,7 +56,7 @@ class PlusNode extends OpNode {
   }
 }
 
-class MinusNode extends OpNode {
+class MinusNode extends BinaryOpNode {
   MinusNode() {
     super();
     this.op = "-";
@@ -65,7 +66,7 @@ class MinusNode extends OpNode {
   }
 }
 
-class MultNode extends OpNode {
+class MultNode extends BinaryOpNode {
   MultNode() {
     super();
     this.op = "*";
@@ -75,7 +76,7 @@ class MultNode extends OpNode {
   }
 }
 
-class DivNode extends OpNode {
+class DivNode extends BinaryOpNode {
   DivNode() {
     super();
     this.op = "/";
@@ -86,7 +87,7 @@ class DivNode extends OpNode {
 }
 
 
-class PowerNode extends OpNode {
+class PowerNode extends BinaryOpNode {
   PowerNode() {
     super();
     this.op = "**";
@@ -96,7 +97,7 @@ class PowerNode extends OpNode {
   }
 }
 
-class LogNode extends OpNode {
+class LogNode extends BinaryOpNode {
   LogNode() {
     super();
     this.op = "//";
@@ -107,7 +108,7 @@ class LogNode extends OpNode {
 }
 
 
-class ModNode extends OpNode {
+class ModNode extends BinaryOpNode {
   ModNode() {
     super();
     this.op = "%";
@@ -117,7 +118,7 @@ class ModNode extends OpNode {
   }
 }
 
-class BitAndNode extends OpNode {
+class BitAndNode extends BinaryOpNode {
   BitAndNode() {
     super();
     this.op = "&";
@@ -127,7 +128,7 @@ class BitAndNode extends OpNode {
   }
 }
 
-class BitOrNode extends OpNode {
+class BitOrNode extends BinaryOpNode {
   BitOrNode() {
     super();
     this.op = "|";
@@ -137,7 +138,7 @@ class BitOrNode extends OpNode {
   }
 }
 
-class BitXorNode extends OpNode {
+class BitXorNode extends BinaryOpNode {
   BitXorNode() {
     super();
     this.op = "^";
