@@ -15,16 +15,19 @@ boolean tileMode = false;
 //random(0, 128)));
 //random(1, 4)));
 //random(-8, 8)));
-int CONST_MIN = -8;
-int CONST_MAX = 8;
+int CONST_MIN = -1024;
+int CONST_MAX = 1024;
+
+final int FUNC_MIN_LEN = 64;
+final int FUNC_MAX_LEN = 256;
 
 // Also, please feel free to tweak
 // The probabilities in decider()
 
 final String[] AVAILABLE_UNARY_OPS = {
-   //"SinNode",
-   //"CosNode",
-   //"TanNode",
+   "SinNode",
+   "CosNode",
+   "TanNode",
    "NegativeNode",
    "ComplementNode"
  }; 
@@ -33,13 +36,13 @@ final String[] AVAILABLE_BINARY_OPS = {
   "BitAndNode",
   "BitOrNode",
   "BitXorNode",
-  //"MinusNode",
+  "MinusNode",
   "ModNode",
-  //"MultNode",
-  //"PlusNode",
-  //"PowerNode",
-  //"DivNode",
-  //"LogNode",
+  "MultNode",
+  "PlusNode",
+  "PowerNode",
+  "DivNode",
+  "LogNode",
   "MaxNode",
   "MinNode"
  };

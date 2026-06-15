@@ -36,7 +36,7 @@ abstract class BinaryOpNode implements BinaryNode {
     this.right = value;
   }
 
-  abstract int eval(int x, int y);
+  abstract float eval(int x, int y);
 
   String describe() {
     return "(" + left.describe() + " " + this.op + " " + right.describe() + ")";
@@ -48,7 +48,7 @@ class PlusNode extends BinaryOpNode {
     super();
     this.op = "+";
   }
-  int eval(int x, int y) {
+float eval(int x, int y) {
     return this.left.eval(x, y) + this.right.eval(x, y);
   }
 }
@@ -58,7 +58,7 @@ class MinusNode extends BinaryOpNode {
     super();
     this.op = "-";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return this.left.eval(x, y) - this.right.eval(x, y);
   }
 }
@@ -68,7 +68,7 @@ class MultNode extends BinaryOpNode {
     super();
     this.op = "*";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return this.left.eval(x, y) * this.right.eval(x, y);
   }
 }
@@ -78,7 +78,7 @@ class DivNode extends BinaryOpNode {
     super();
     this.op = "/";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return this.left.eval(x, y) / this.right.eval(x, y);
   }
 }
@@ -89,8 +89,8 @@ class PowerNode extends BinaryOpNode {
     super();
     this.op = "**";
   }
-  int eval(int x, int y) {
-    return round(pow(this.left.eval(x, y), this.right.eval(x, y)));
+  float eval(int x, int y) {
+    return pow(this.left.eval(x, y), this.right.eval(x, y));
   }
 }
 
@@ -99,8 +99,8 @@ class LogNode extends BinaryOpNode {
     super();
     this.op = "//";
   }
-  int eval(int x, int y) {
-    return round((float)Math.log((this.left.eval(x, y)) / Math.log(this.right.eval(x, y))));
+  float eval(int x, int y) {
+    return (float)Math.log((this.left.eval(x, y)) / Math.log(this.right.eval(x, y)));
   }
 }
 
@@ -110,7 +110,7 @@ class ModNode extends BinaryOpNode {
     super();
     this.op = "%";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return this.left.eval(x, y) % this.right.eval(x, y);
   }
 }
@@ -120,8 +120,8 @@ class BitAndNode extends BinaryOpNode {
     super();
     this.op = "&";
   }
-  int eval(int x, int y) {
-    return this.left.eval(x, y) & this.right.eval(x, y);
+  float eval(int x, int y) {
+    return round(this.left.eval(x, y)) & round(this.right.eval(x, y));
   }
 }
 
@@ -130,8 +130,8 @@ class BitOrNode extends BinaryOpNode {
     super();
     this.op = "|";
   }
-  int eval(int x, int y) {
-    return this.left.eval(x, y) | this.right.eval(x, y);
+  float eval(int x, int y) {
+    return round(this.left.eval(x, y)) | round(this.right.eval(x, y));
   }
 }
 
@@ -140,8 +140,8 @@ class BitXorNode extends BinaryOpNode {
     super();
     this.op = "^";
   }
-  int eval(int x, int y) {
-    return this.left.eval(x, y) ^ this.right.eval(x, y);
+  float eval(int x, int y) {
+    return round(this.left.eval(x, y)) ^ round(this.right.eval(x, y));
   }
 }
 
@@ -149,7 +149,7 @@ class MaxNode extends BinaryOpNode {
   MaxNode() {
     super();
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return max(this.left.eval(x, y), this.right.eval(x, y));
   }
   String describe() {
@@ -164,7 +164,7 @@ class MinNode extends BinaryOpNode {
   String describe() {
     return "min(" + left.describe() + ", " + right.describe() + ")";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return min(this.left.eval(x, y), this.right.eval(x, y));
   }
 }

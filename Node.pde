@@ -1,5 +1,5 @@
 interface Node {
-  abstract int eval(int x, int y);
+  abstract float eval(int x, int y);
   abstract String describe();
 }
 
@@ -14,7 +14,7 @@ class XNode implements UnaryNode {
   String describe() {
     return "x";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return x;
   }
 }
@@ -23,7 +23,7 @@ class YNode implements UnaryNode {
   String describe() {
     return "y";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return y;
   }
 }
@@ -39,7 +39,7 @@ class ConstNode implements UnaryNode {
     return "" + this.value;
   }
 
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return this.value;
   }
 }
@@ -48,8 +48,8 @@ class ConstNode implements UnaryNode {
 Node decider() {
 
   Node n;
-  if (random(1.0) > 0.45) {
-    if (random(1.0) > 0.75) {
+  if (random(1.0) > 0.66) {
+    if (random(1.0) > 0.5) {
       n = new ConstNode(round(random(CONST_MIN, CONST_MAX)));
     } else {
       if (random(1.0) > 0.5) {
@@ -118,7 +118,7 @@ class OpTree {
     String desc = describe();
 
     // approximate complexity in the hackiest way possible!
-    while ((desc.length() < 32) || (desc.length() > 128)) {
+    while ((desc.length() < FUNC_MIN_LEN) || (desc.length() > FUNC_MAX_LEN)) {
       //print("x");
       init();
       desc = describe();
@@ -128,7 +128,7 @@ class OpTree {
 
   int eval(int x, int y) {
     try {
-      return root.eval(x, y);
+      return round(root.eval(x, y));
     }
     catch (ArithmeticException ae) {
       return 0;

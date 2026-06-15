@@ -23,7 +23,7 @@ abstract class UnaryOpNode implements UnaryNode {
     this.child = value;
   }
 
-  abstract int eval(int x, int y);
+  abstract float eval(int x, int y);
 
   String describe(){
     return this.op + "(" + this.child.describe() + ")"; 
@@ -35,8 +35,8 @@ class SinNode extends UnaryOpNode {
     super();
     this.op = "sin";
   }
-  int eval(int x, int y) {
-    return round(sin(radians(this.child.eval(x, y))));
+  float eval(int x, int y) {
+    return sin(radians(this.child.eval(x, y)));
   }
 }
 
@@ -45,8 +45,8 @@ class CosNode extends UnaryOpNode {
     super();
     this.op = "cos";
   }
-  int eval(int x, int y) {
-    return round(cos(radians(this.child.eval(x, y))));
+  float eval(int x, int y) {
+    return cos(radians(this.child.eval(x, y)));
   }
 }
 
@@ -55,8 +55,8 @@ class TanNode extends UnaryOpNode {
     super();
     this.op = "tan";
   }
-  int eval(int x, int y) {
-    return round(tan(radians(this.child.eval(x, y))));
+  float eval(int x, int y) {
+    return tan(radians(this.child.eval(x, y)));
   }
 }
 
@@ -65,7 +65,7 @@ class NegativeNode extends UnaryOpNode {
     super();
     this.op = "-";
   }
-  int eval(int x, int y) {
+  float eval(int x, int y) {
     return -this.child.eval(x, y);
   }
 }
@@ -75,7 +75,7 @@ class ComplementNode extends UnaryOpNode {
     super();
     this.op = "~";
   }
-  int eval(int x, int y) {
-    return ~this.child.eval(x, y);
+  float eval(int x, int y) {
+    return ~round(this.child.eval(x, y));
   }
 }
