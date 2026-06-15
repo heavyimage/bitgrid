@@ -4,5 +4,5 @@
 
 A random integer function art making tool
 
-Inspired by https://mastodon.social/@bitartbot@freeradical.zone, created by @suetanvil@freeradical.zon
+Inspired by <https://freeradical.zone/@bitartbot>, created by <https://freeradical.zone/@suetanvil>
 
