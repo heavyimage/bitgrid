@@ -1,6 +1,8 @@
 OpNode randomOp() {
   OpNode n;
-  String[] list = {"BitAndNode", "BitOrNode", "BitXorNode", "MinusNode", "ModNode", "MultNode", "PlusNode", "PowerNode"};
+  
+  // TODO: sort this list / the functions below into bitwise and not!
+  String[] list = {"BitAndNode", "BitOrNode", "BitXorNode", "MinusNode", "ModNode", "MultNode", "PlusNode"};// "DivNode", "PowerNode", "LogNode"};
   Random r = new Random();
   String subclass = list[r.nextInt(list.length)];
   if (subclass == "BitAndNode") n = new BitAndNode();
@@ -9,8 +11,10 @@ OpNode randomOp() {
   else if (subclass == "MinusNode") n = new MinusNode();
   else if (subclass == "ModNode") n = new ModNode();
   else if (subclass == "MultNode") n = new MultNode();
+  else if (subclass == "DivNode") n = new DivNode();
   else if (subclass == "PlusNode") n = new PlusNode();
   else if (subclass == "PowerNode") n = new PowerNode();
+  else if (subclass == "LogNode") n = new LogNode();
   else throw new RuntimeException("unknown type");
   return n;
 }
@@ -50,16 +54,6 @@ class PlusNode extends OpNode {
   }
 }
 
-class PowerNode extends OpNode {
-  PowerNode() {
-    super();
-    this.op = "**";
-  }
-  int eval(int x, int y) {
-    return round(pow(this.left.eval(x, y), this.right.eval(x, y)));
-  }
-}
-
 class MinusNode extends OpNode {
   MinusNode() {
     super();
@@ -77,6 +71,37 @@ class MultNode extends OpNode {
   }
   int eval(int x, int y) {
     return this.left.eval(x, y) * this.right.eval(x, y);
+  }
+}
+
+class DivNode extends OpNode {
+  DivNode() {
+    super();
+    this.op = "/";
+  }
+  int eval(int x, int y) {
+    return this.left.eval(x, y) / this.right.eval(x, y);
+  }
+}
+
+
+class PowerNode extends OpNode {
+  PowerNode() {
+    super();
+    this.op = "**";
+  }
+  int eval(int x, int y) {
+    return round(pow(this.left.eval(x, y), this.right.eval(x, y)));
+  }
+}
+
+class LogNode extends OpNode {
+  LogNode() {
+    super();
+    this.op = "//";
+  }
+  int eval(int x, int y) {
+    return round((float)Math.log((this.left.eval(x, y)) / Math.log(this.right.eval(x, y))));
   }
 }
 

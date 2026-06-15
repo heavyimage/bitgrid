@@ -44,7 +44,7 @@ Node decider() {
   Node n;
   if (random(1.0) > 0.45) {
     if (random(1.0) > 0.75) {
-      n = new ValueNode(round(random(-512, 512)));
+      n = new ValueNode(round(random(-16, 16)));
     } else {
       if (random(1.0) > 0.5) {
         n = new ValueNode("x");
@@ -63,7 +63,7 @@ class OpTree {
 
   OpNode root;
 
-  OpTree() {
+  void init() {
     // TODO: randomize this too?
     root = randomOp();
 
@@ -87,13 +87,24 @@ class OpTree {
       cursor.setRight(right);
       if (right instanceof OpNode) pipeline.add(right);
     }
-    
+
     // TODO: try to get to a certain depth
     // TODO: optimization: collapse context free sections of the tree into single value nodes?
     // TODO: could also colapse constants...
-    
-    this.describe();
-    
+  }
+
+  OpTree() {
+    init();
+
+    String desc = describe();
+
+    // approximate complexity in the hackiest way possible!
+    while ((desc.length() < 32) || (desc.length() > 128)) {
+      print("x");
+      init();
+      desc = describe();
+    }
+    println("\n" + desc + " (length: " + desc.length() + "!)");
   }
 
   int eval(int x, int y) {
@@ -105,7 +116,7 @@ class OpTree {
     }
   }
 
-  void describe() {
-    print("f(x, y) = " + root.describe());
+  String describe() {
+    return "f(x, y) = " + root.describe();
   }
 }

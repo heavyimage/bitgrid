@@ -1,5 +1,6 @@
 // f(x, y) = ((((x % y) ^ (~y)) % ((9 % y) % (y & y))) + (((-y) - (x * 1)) - ((7 | y) - (x & x)))) % 5
 
+// TODO: dynamically rescale this, say with +/-!
 final int DIM = 1024;
 final int SCALE = 1;
 int[][] red, green, blue;
@@ -29,6 +30,7 @@ void setup() {
   blue = initGrid();
 }
 
+// Draw these as they come in?!
 void update(int[][] grid) {
   func = new OpTree();
   int min = Integer.MAX_VALUE;
