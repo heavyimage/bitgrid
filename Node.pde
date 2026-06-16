@@ -1,37 +1,52 @@
-interface Node {
-  abstract float eval(int x, int y);
+abstract class Node {
+  Node[] children;
+  abstract float eval(int x, int y, int t);
   abstract String describe();
+  abstract boolean isConst(int depth);
 }
 
-interface UnaryNode extends Node {
+abstract class UnaryNode extends Node {
 }
-interface BinaryNode extends Node {
-}
-interface OpNode extends Node {
+abstract class BinaryNode extends Node {
 }
 
-class XNode implements UnaryNode {
+class XNode extends UnaryNode {
   String describe() {
     return "x";
   }
-  float eval(int x, int y) {
+  float eval(int x, int y, int t) {
     return x;
   }
+  
+  boolean isConst(int depth){ return false;}
 }
 
-class YNode implements UnaryNode {
+class YNode extends UnaryNode {
   String describe() {
     return "y";
   }
-  float eval(int x, int y) {
+  float eval(int x, int y, int t) {
     return y;
   }
+  
+  boolean isConst(int depth){ return false;}
 }
 
-class ConstNode implements UnaryNode {
+class TNode extends UnaryNode {
+  String describe() {
+    return "t";
+  }
+  float eval(int x, int y, int t) {
+    return t;
+  }
+  
+  boolean isConst(int depth){ return false;}
+}
+
+class ConstIntNode extends UnaryNode {
   int value;
 
-  ConstNode(int value) {
+  ConstIntNode(int value) {
     this.value = value;
   }
 
@@ -39,10 +54,29 @@ class ConstNode implements UnaryNode {
     return "" + this.value;
   }
 
-  float eval(int x, int y) {
+  float eval(int x, int y, int t) {
     return this.value;
   }
+  boolean isConst(int depth){ return true;}
 }
+
+class ConstFloatNode extends UnaryNode {
+  float value;
+
+  ConstFloatNode(float value) {
+    this.value = value;
+  }
+
+  String describe() {
+    return "" + this.value;
+  }
+
+  float eval(int x, int y, int t) {
+    return this.value;
+  }
+  boolean isConst(int depth){ return true;}
+}
+
 
 // HUGELY important -- the probabilities of various different nodes!
 Node decider() {
@@ -50,12 +84,15 @@ Node decider() {
   Node n;
   if (random(1.0) > 0.66) {
     if (random(1.0) > 0.5) {
-      n = new ConstNode(round(random(CONST_MIN, CONST_MAX)));
+      n = new ConstIntNode(round(random(CONST_MIN, CONST_MAX)));
     } else {
-      if (random(1.0) > 0.5) {
+      float rand = random(1.0);
+      if (rand > 0.66) {
         n = new XNode();
-      } else {
+      } else if (rand > 0.33){
         n = new YNode();
+      } else{
+        n = new TNode();
       }
     }
   } else {
@@ -119,16 +156,19 @@ class OpTree {
 
     // approximate complexity in the hackiest way possible!
     while ((desc.length() < FUNC_MIN_LEN) || (desc.length() > FUNC_MAX_LEN)) {
-      //print("x");
       init();
       desc = describe();
     }
-    println(desc + " (length: " + desc.length() + "!)");
+    //println(desc + " (length: " + desc.length() + "!)");
+    // Simplify formula!
+    root.isConst(0);
+    String newdesc = describe();
+    if (desc.length() > newdesc.length()) println(newdesc + " (length: " + newdesc.length() + "!)");
   }
 
-  int eval(int x, int y) {
+  int eval(int x, int y, int t) {
     try {
-      return round(root.eval(x, y));
+      return round(root.eval(x, y, t));
     }
     catch (ArithmeticException ae) {
       return 0;
@@ -136,6 +176,6 @@ class OpTree {
   }
 
   String describe() {
-    return "f(x, y) = " + root.describe();
+    return "f(x, y, t) = " + root.describe();
   }
 }

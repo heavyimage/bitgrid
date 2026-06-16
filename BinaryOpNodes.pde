@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 BinaryOpNode randomBinaryOp() {
   BinaryOpNode n;
 
@@ -18,28 +20,44 @@ BinaryOpNode randomBinaryOp() {
   return n;
 }
 
-abstract class BinaryOpNode implements BinaryNode {
-  Node left;
-  Node right;
+abstract class BinaryOpNode extends BinaryNode {
+
+  Node[] children;
   String op;
 
   BinaryOpNode() {
-    this.left = null;
-    this.right = null;
+    children = new Node[2];
   }
 
   void setLeft(Node value) {
-    this.left = value;
+    this.children[0] = value;
   }
 
   void setRight(Node value) {
-    this.right = value;
+    this.children[1] = value;
   }
 
-  abstract float eval(int x, int y);
-
   String describe() {
-    return "(" + left.describe() + " " + this.op + " " + right.describe() + ")";
+    return "(" + children[0].describe() + " " + this.op + " " + children[1].describe() + ")";
+  }
+  
+  // TODO: Move this to a shared interface(?) for use with UnaryOpNodes
+  // TODO: Add identities like y * 0 = 0
+  boolean isConst(int depth) {
+    boolean[] childrenConst = new boolean[this.children.length];
+    String indent = String.join("", Collections.nCopies(depth, " "));
+    for (int i=0; i<this.children.length; i++) {
+      boolean well = this.children[i].isConst(depth+1);
+      childrenConst[i] = well;
+      //println(indent, this.children[i].describe(), "==>", well);
+      if (well && (this.children[i] instanceof UnaryOpNode || this.children[i] instanceof BinaryOpNode)) {
+        //print("fix:" + this.children[i]);
+        float value = this.children[i].eval(0, 0, 0);
+        this.children[i] = new ConstFloatNode(value);
+        //println("==>" + this.children[i] + "(" + this.children[i].eval(0, 0) + ")");
+      }
+    }
+    return areAllTrue(childrenConst);
   }
 }
 
@@ -48,8 +66,8 @@ class PlusNode extends BinaryOpNode {
     super();
     this.op = "+";
   }
-float eval(int x, int y) {
-    return this.left.eval(x, y) + this.right.eval(x, y);
+  float eval(int x, int y, int t) {
+    return this.children[0].eval(x, y, t) + this.children[1].eval(x, y, t);
   }
 }
 
@@ -58,8 +76,8 @@ class MinusNode extends BinaryOpNode {
     super();
     this.op = "-";
   }
-  float eval(int x, int y) {
-    return this.left.eval(x, y) - this.right.eval(x, y);
+  float eval(int x, int y, int t) {
+    return this.children[0].eval(x, y, t) - this.children[1].eval(x, y, t);
   }
 }
 
@@ -68,8 +86,8 @@ class MultNode extends BinaryOpNode {
     super();
     this.op = "*";
   }
-  float eval(int x, int y) {
-    return this.left.eval(x, y) * this.right.eval(x, y);
+  float eval(int x, int y, int t) {
+    return this.children[0].eval(x, y, t) * this.children[1].eval(x, y, t);
   }
 }
 
@@ -78,8 +96,8 @@ class DivNode extends BinaryOpNode {
     super();
     this.op = "/";
   }
-  float eval(int x, int y) {
-    return this.left.eval(x, y) / this.right.eval(x, y);
+  float eval(int x, int y, int t) {
+    return this.children[0].eval(x, y, t) / this.children[1].eval(x, y, t);
   }
 }
 
@@ -89,8 +107,8 @@ class PowerNode extends BinaryOpNode {
     super();
     this.op = "**";
   }
-  float eval(int x, int y) {
-    return pow(this.left.eval(x, y), this.right.eval(x, y));
+  float eval(int x, int y, int t) {
+    return pow(this.children[0].eval(x, y, t), this.children[1].eval(x, y, t));
   }
 }
 
@@ -99,8 +117,8 @@ class LogNode extends BinaryOpNode {
     super();
     this.op = "//";
   }
-  float eval(int x, int y) {
-    return (float)Math.log((this.left.eval(x, y)) / Math.log(this.right.eval(x, y)));
+  float eval(int x, int y, int t) {
+    return (float)Math.log((this.children[0].eval(x, y, t)) / Math.log(this.children[1].eval(x, y, t)));
   }
 }
 
@@ -110,8 +128,8 @@ class ModNode extends BinaryOpNode {
     super();
     this.op = "%";
   }
-  float eval(int x, int y) {
-    return this.left.eval(x, y) % this.right.eval(x, y);
+  float eval(int x, int y, int t) {
+    return this.children[0].eval(x, y, t) % this.children[1].eval(x, y, t);
   }
 }
 
@@ -120,8 +138,8 @@ class BitAndNode extends BinaryOpNode {
     super();
     this.op = "&";
   }
-  float eval(int x, int y) {
-    return round(this.left.eval(x, y)) & round(this.right.eval(x, y));
+  float eval(int x, int y, int t) {
+    return round(this.children[0].eval(x, y, t)) & round(this.children[1].eval(x, y, t));
   }
 }
 
@@ -130,8 +148,8 @@ class BitOrNode extends BinaryOpNode {
     super();
     this.op = "|";
   }
-  float eval(int x, int y) {
-    return round(this.left.eval(x, y)) | round(this.right.eval(x, y));
+  float eval(int x, int y, int t) {
+    return round(this.children[0].eval(x, y, t)) | round(this.children[1].eval(x, y, t));
   }
 }
 
@@ -140,8 +158,8 @@ class BitXorNode extends BinaryOpNode {
     super();
     this.op = "^";
   }
-  float eval(int x, int y) {
-    return round(this.left.eval(x, y)) ^ round(this.right.eval(x, y));
+  float eval(int x, int y, int t) {
+    return round(this.children[0].eval(x, y, t)) ^ round(this.children[1].eval(x, y, t));
   }
 }
 
@@ -149,11 +167,11 @@ class MaxNode extends BinaryOpNode {
   MaxNode() {
     super();
   }
-  float eval(int x, int y) {
-    return max(this.left.eval(x, y), this.right.eval(x, y));
+  float eval(int x, int y, int t) {
+    return max(this.children[0].eval(x, y, t ), this.children[1].eval(x, y, t));
   }
   String describe() {
-    return "max(" + left.describe() + ", " + right.describe() + ")";
+    return "max(" + children[0].describe() + ", " + children[1].describe() + ")";
   }
 }
 
@@ -162,9 +180,9 @@ class MinNode extends BinaryOpNode {
     super();
   }
   String describe() {
-    return "min(" + left.describe() + ", " + right.describe() + ")";
+    return "min(" + children[0].describe() + ", " + children[1].describe() + ")";
   }
-  float eval(int x, int y) {
-    return min(this.left.eval(x, y), this.right.eval(x, y));
+  float eval(int x, int y, int t) {
+    return min(this.children[0].eval(x, y,t ), this.children[1].eval(x, y, t));
   }
 }

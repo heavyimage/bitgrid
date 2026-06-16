@@ -7,26 +7,45 @@ UnaryOpNode randomUnaryOp() {
   else if (subclass == "TanNode") n = new TanNode();
   else if (subclass == "NegativeNode") n = new NegativeNode();
   else if (subclass == "ComplementNode") n = new ComplementNode();
+  else if (subclass == "FloorNode") n = new FloorNode();
   else throw new RuntimeException("unknown type");
   return n;
 }
 
-abstract class UnaryOpNode implements UnaryNode {
-  Node child;
+abstract class UnaryOpNode extends UnaryNode {
+
+  Node[] children;
   String op;
 
   UnaryOpNode() {
-    this.child = null;
+    children = new Node[1];
   }
 
   void setChild(Node value) {
-    this.child = value;
+    this.children[0] = value;
   }
 
-  abstract float eval(int x, int y);
+  String describe() {
+    return this.op + "(" + this.children[0].describe() + ")";
+  }
 
-  String describe(){
-    return this.op + "(" + this.child.describe() + ")"; 
+  // TODO: Move this to a shared interface(?) for use with BinaryOpNodes
+  // TODO: Add identities like -(-(x)) == x
+  boolean isConst(int depth) {
+    boolean[] childrenConst = new boolean[this.children.length];
+    String indent = String.join("", Collections.nCopies(depth, " "));
+    for (int i=0; i<this.children.length; i++) {
+      boolean well = this.children[i].isConst(depth+1);
+      childrenConst[i] = well;
+      //println(indent, this.children[i].describe(), "==>", well);
+      if (well && (this.children[i] instanceof UnaryOpNode || this.children[i] instanceof BinaryOpNode)) {
+        //print("fix:" + this.children[i]);
+        float value = this.children[i].eval(0, 0, 0);
+        this.children[i] = new ConstFloatNode(value);
+        //println("==>" + this.children[i] + "(" + this.children[i].eval(0, 0) + ")");
+      }
+    }
+    return areAllTrue(childrenConst);
   }
 }
 
@@ -35,8 +54,8 @@ class SinNode extends UnaryOpNode {
     super();
     this.op = "sin";
   }
-  float eval(int x, int y) {
-    return sin(radians(this.child.eval(x, y)));
+  float eval(int x, int y, int t) {
+    return sin(radians(this.children[0].eval(x, y, t)));
   }
 }
 
@@ -45,8 +64,8 @@ class CosNode extends UnaryOpNode {
     super();
     this.op = "cos";
   }
-  float eval(int x, int y) {
-    return cos(radians(this.child.eval(x, y)));
+  float eval(int x, int y, int t) {
+    return cos(radians(this.children[0].eval(x, y, t)));
   }
 }
 
@@ -55,8 +74,8 @@ class TanNode extends UnaryOpNode {
     super();
     this.op = "tan";
   }
-  float eval(int x, int y) {
-    return tan(radians(this.child.eval(x, y)));
+  float eval(int x, int y, int t) {
+    return tan(radians(this.children[0].eval(x, y, t)));
   }
 }
 
@@ -65,8 +84,8 @@ class NegativeNode extends UnaryOpNode {
     super();
     this.op = "-";
   }
-  float eval(int x, int y) {
-    return -this.child.eval(x, y);
+  float eval(int x, int y, int t) {
+    return -this.children[0].eval(x, y, t);
   }
 }
 
@@ -75,7 +94,17 @@ class ComplementNode extends UnaryOpNode {
     super();
     this.op = "~";
   }
-  float eval(int x, int y) {
-    return ~round(this.child.eval(x, y));
+  float eval(int x, int y, int t) {
+    return ~round(this.children[0].eval(x, y, t));
+  }
+}
+
+class FloorNode extends UnaryOpNode {
+  FloorNode() {
+    super();
+    this.op = "floor";
+  }
+  float eval(int x, int y, int t) {
+    return floor(this.children[0].eval(x, y, t));
   }
 }

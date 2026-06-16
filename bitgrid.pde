@@ -7,6 +7,8 @@ OpTree func1, func2, func3;
 int[][] g1, g2, g3;
 boolean ready;
 boolean tileMode = false;
+int time = 0;
+boolean animationMode = false;
 
 // NOTE: futzing with these values can have interesting reuslts, eg:
 //random(-1, 1)));
@@ -24,14 +26,6 @@ final int FUNC_MAX_LEN = 256;
 // Also, please feel free to tweak
 // The probabilities in decider()
 
-final String[] AVAILABLE_UNARY_OPS = {
-   "SinNode",
-   "CosNode",
-   "TanNode",
-   "NegativeNode",
-   "ComplementNode"
- }; 
-
 final String[] AVAILABLE_BINARY_OPS = {
   "BitAndNode",
   "BitOrNode",
@@ -40,12 +34,27 @@ final String[] AVAILABLE_BINARY_OPS = {
   "ModNode",
   "MultNode",
   "PlusNode",
-  "PowerNode",
+  //"PowerNode",
   "DivNode",
-  "LogNode",
+  //"LogNode",
   "MaxNode",
   "MinNode"
- };
+};
+
+final String[] AVAILABLE_UNARY_OPS = {
+  "SinNode",
+  "CosNode",
+  "TanNode",
+  "NegativeNode",
+  "ComplementNode",
+  "FloorNode"
+};
+
+// Helper
+boolean areAllTrue(boolean[] array) {
+  for (boolean b : array) if (!b) return false;
+  return true;
+}
 
 void setup() {
   size(1024, 1024);
@@ -79,19 +88,44 @@ int[][] update_cells(OpTree func) {
     if (y % 64 == 0) print(".");
     //if (!ready) return grid;
     for (int x=0; x < DIM; x++) {
-      temp = func.eval(x, y);
+      //temp = func.eval(x, y);
+      //temp = round(sqrt(func.eval(x, y)));
+      //temp = func.eval(x, y);
+      //if (temp == -1) temp = 0;
+      //else temp = 255*abs(temp / (temp + 1));
+      temp = func.eval(x, y, time);
+
       if (temp > max) max = temp;
       else if (temp < min) min = temp;
       grid[y][x] = temp;
     }
   }
 
+  int [] histogram = new int[256];
   // rescale from 0 to 255 for this plane
   for (int y=0; y < DIM; y++) {
     for (int x=0; x < DIM; x++) {
-      grid[y][x] = round(map(grid[y][x], min, max, 0, 255));
+      float value = grid[y][x];
+      //grid[y][x] = floor(map(abs(value), 0, 1, 0, 255));
+
+      // remapping logic
+      value = map(value, min, max, 0, 10); // make everying positive
+      value = value / (value + 1.0); // make everything in the range 0..1
+      value = value * 255; // make everything in the range 0..255
+      grid[y][x] = floor(value);
+      histogram[floor(value)] += 1;
+
+      // Binary output?!
+      //if (value > 128) grid[y][x] = 255;
+      //else grid[y][x] = 0;
     }
   }
+  // print histogram
+  /*
+  for (int i=0;i<256;i++){
+   if (histogram[i] != 0) println(i + ": " + histogram[i]);
+   }
+   */
   return grid;
 }
 
@@ -107,6 +141,18 @@ void draw() {
     }
   }
   ready = true;
+  
+  if (animationMode){
+    String frame ="frame-" + nf(time, 4) + ".png";
+    println("Saving frame " + frame + "!");
+    saveFrame(frame);
+    time += 1;
+
+    g1 = update_cells(func1);
+    g2 = update_cells(func2);
+    g3 = update_cells(func3);
+  }
+  
 }
 
 void mouseClicked() {
@@ -121,11 +167,11 @@ void refresh() {
   // TODO: add black/white
   /*
   if (random(1.0) > 0.5) {
-    colorMode(HSB);
-  } else {
-    colorMode(RGB);
-  }
-  */
+   colorMode(HSB);
+   } else {
+   colorMode(RGB);
+   }
+   */
 
   func1 = new OpTree();
   func2 = new OpTree();
@@ -140,30 +186,30 @@ void refresh() {
 }
 
 void keyPressed() {
+
+  // save the frame
   if (key == 's') {
     saveFrame("line-######.png");
     println("saved line-" + frameCount + ".png");
+
+    // toggle tile mode
   } else if (key == 't') {
     tileMode = !tileMode;
+
+    // zoom in!
   } else if ((key == '=') && (DIM > 1) && ready) {
     ready = false;
     SCALE *= 2;
     DIM /= 2;
-    println("SCALE: " + SCALE);
-    println("DIM: " + DIM);
-    // update
-    g1 = update_cells(func1);
-    g2 = update_cells(func2);
-    g3 = update_cells(func3);
+
+    // zoom out!
   } else if ((key == '-') && (SCALE > 1) && ready) {
     ready = false;
     SCALE /= 2;
     DIM *= 2;
-    println("SCALE: " + SCALE);
-    println("DIM: " + DIM);
-    // update
-    g1 = update_cells(func1);
-    g2 = update_cells(func2);
-    g3 = update_cells(func3);
+    
+  // toggle animation mode
+  } else if (key == 'a') {
+    animationMode = !animationMode;
   }
 }
