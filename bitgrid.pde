@@ -20,8 +20,8 @@ boolean animationMode = false;
 int CONST_MIN = -1024;
 int CONST_MAX = 1024;
 
-final int FUNC_MIN_LEN = 64;
-final int FUNC_MAX_LEN = 256;
+final int FUNC_MIN_LEN = 128;
+final int FUNC_MAX_LEN = 512;
 
 // Also, please feel free to tweak
 // The probabilities in decider()
@@ -35,19 +35,19 @@ final String[] AVAILABLE_BINARY_OPS = {
   "MultNode",
   "PlusNode",
   //"PowerNode",
-  "DivNode",
+  //"DivNode",
   //"LogNode",
   "MaxNode",
   "MinNode"
 };
 
 final String[] AVAILABLE_UNARY_OPS = {
-  "SinNode",
-  "CosNode",
-  "TanNode",
+  //"SinNode",
+  //"CosNode",
+  //"TanNode",
   "NegativeNode",
   "ComplementNode",
-  "FloorNode"
+  //"FloorNode"
 };
 
 // Helper
@@ -161,6 +161,7 @@ void mouseClicked() {
 }
 
 void refresh() {
+  time = 0;
   background(0);
   println("\n");
   // Color variations
@@ -211,5 +212,6 @@ void keyPressed() {
   // toggle animation mode
   } else if (key == 'a') {
     animationMode = !animationMode;
+    if (animationMode) time = 0;
   }
 }

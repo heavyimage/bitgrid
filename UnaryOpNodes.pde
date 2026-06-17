@@ -41,7 +41,7 @@ abstract class UnaryOpNode extends UnaryNode {
       if (well && (this.children[i] instanceof UnaryOpNode || this.children[i] instanceof BinaryOpNode)) {
         //print("fix:" + this.children[i]);
         float value = this.children[i].eval(0, 0, 0);
-        this.children[i] = new ConstFloatNode(value);
+        this.children[i] = new ConstIntNode(round(value));
         //println("==>" + this.children[i] + "(" + this.children[i].eval(0, 0) + ")");
       }
     }

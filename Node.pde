@@ -60,6 +60,7 @@ class ConstIntNode extends UnaryNode {
   boolean isConst(int depth){ return true;}
 }
 
+/*
 class ConstFloatNode extends UnaryNode {
   float value;
 
@@ -76,6 +77,7 @@ class ConstFloatNode extends UnaryNode {
   }
   boolean isConst(int depth){ return true;}
 }
+*/
 
 
 // HUGELY important -- the probabilities of various different nodes!
