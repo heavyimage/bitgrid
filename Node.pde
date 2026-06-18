@@ -89,9 +89,9 @@ Node decider() {
       n = new ConstIntNode(round(random(CONST_MIN, CONST_MAX)));
     } else {
       float rand = random(1.0);
-      if (rand > 0.66) {
+      if (rand > 0.6) {
         n = new XNode();
-      } else if (rand > 0.33){
+      } else if (rand > 0.2){
         n = new YNode();
       } else{
         n = new TNode();

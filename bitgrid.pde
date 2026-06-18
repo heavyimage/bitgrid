@@ -7,8 +7,9 @@ OpTree func1, func2, func3;
 int[][] g1, g2, g3;
 boolean ready;
 boolean tileMode = false;
-int time = 0;
+int time = 1; //<>//
 boolean animationMode = false;
+PVector anim_drift;
 
 // NOTE: futzing with these values can have interesting reuslts, eg:
 //random(-1, 1)));
@@ -21,7 +22,7 @@ int CONST_MIN = -1024;
 int CONST_MAX = 1024;
 
 final int FUNC_MIN_LEN = 128;
-final int FUNC_MAX_LEN = 512;
+final int FUNC_MAX_LEN = 768;
 
 // Also, please feel free to tweak
 // The probabilities in decider()
@@ -30,7 +31,7 @@ final String[] AVAILABLE_BINARY_OPS = {
   "BitAndNode",
   "BitOrNode",
   "BitXorNode",
-  "MinusNode",
+  //"MinusNode",
   "ModNode",
   "MultNode",
   "PlusNode",
@@ -38,7 +39,7 @@ final String[] AVAILABLE_BINARY_OPS = {
   //"DivNode",
   //"LogNode",
   "MaxNode",
-  "MinNode"
+  //"MinNode"
 };
 
 final String[] AVAILABLE_UNARY_OPS = {
@@ -93,7 +94,7 @@ int[][] update_cells(OpTree func) {
       //temp = func.eval(x, y);
       //if (temp == -1) temp = 0;
       //else temp = 255*abs(temp / (temp + 1));
-      temp = func.eval(x, y, time);
+      temp = func.eval(x+floor(anim_drift.x*time), y+floor(anim_drift.y*time), time);
 
       if (temp > max) max = temp;
       else if (temp < min) min = temp;
@@ -113,7 +114,8 @@ int[][] update_cells(OpTree func) {
       value = value / (value + 1.0); // make everything in the range 0..1
       value = value * 255; // make everything in the range 0..255
       grid[y][x] = floor(value);
-      histogram[floor(value)] += 1;
+
+      
 
       // Binary output?!
       //if (value > 128) grid[y][x] = 255;
@@ -136,6 +138,7 @@ void draw() {
   for (int y=0; y < DIM; y++) {
     for (int x=0; x < DIM; x++) {
       fill(g1[y][x], g2[y][x], g3[y][x], 255);
+      //fill(g1[y][x], 255);
       if (tileMode) rect(x*SCALE, y*SCALE, SCALE-1, SCALE-1);
       else rect(x*SCALE, y*SCALE, SCALE, SCALE);
     }
@@ -161,7 +164,7 @@ void mouseClicked() {
 }
 
 void refresh() {
-  time = 0;
+  time = 1;
   background(0);
   println("\n");
   // Color variations
@@ -173,6 +176,9 @@ void refresh() {
    colorMode(RGB);
    }
    */
+   
+   anim_drift = new PVector(round(random(0, 3)), round(random(0, 3)));
+   println("Drift: " + anim_drift);
 
   func1 = new OpTree();
   func2 = new OpTree();
@@ -212,6 +218,6 @@ void keyPressed() {
   // toggle animation mode
   } else if (key == 'a') {
     animationMode = !animationMode;
-    if (animationMode) time = 0;
+    if (animationMode) time = 1;
   }
 }
